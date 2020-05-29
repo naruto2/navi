@@ -433,7 +433,7 @@ static void internal_plotuv(vector<double>&U,vector<xyc>&Z,vector<nde>&N,vector<
 {
   static FILE *pp = NULL;
 
-  if ( pp == NULL ) pp = popen("gnuplot","w");
+  if ( pp == NULL ) pp = popen("export QT_LOGGING_RULES='*=false'; gnuplot","w");
   
   double scale=0.4;
   long arrow =1 ;
