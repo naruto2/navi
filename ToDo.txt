@@ -1,4 +1,4 @@
-make test 用のスクリプトを作る
+make test 用のスクリプトを作る ... Done 2020-5-30
 
 foreachをリファクタリングする
 
@@ -6,4 +6,6 @@ Makefileがあんまりなので整理する ... Done 2020-5-30
 
 README.mdに参考文献等を追記する ... Done 2020-5-30
 
-femesh版 op.hppに切り替える
+femesh版 op.hppに切り替える ... Done 2020-5-30
+
+gnuplot のエラーメッセージを消す 

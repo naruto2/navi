@@ -1,15 +1,11 @@
 #include <cstdio>
 #include <vector>
-#include "op.hpp"
-//#include "est/bicgstab.hpp"
-//#include "est/ViennaCL.hpp"
-
-//#include "est/glirulus.hpp"
-//#include "est/Eigen.hpp"
-#include <vector>
 #include <map>
+#include "op.hpp"
 #include "matrix.hpp"
-#include "navierstokes.hpp"
+#include "navi.hpp"
+using namespace std;
+
 
 double u(double x, double y)
 {
@@ -60,6 +56,10 @@ int main(int argc, char **argv)
     solver(A,U,b); //U = glirulus(A,b);
     plotuv(U);
     if ( 0 == (T%100)) fprintuv(U);
+    if ( defop("-test") ) {
+      fprintuv(U);
+      if ( T > 3 ) return 0;
+    }
   }
   return 0;
 }

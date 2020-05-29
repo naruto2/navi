@@ -1,17 +1,17 @@
 PROG = navi
 CC   = /opt/cuda/bin/nvcc
-SRCS = 	solver.cpp \
-	navierstokes.cpp
+SRCS =  op.cpp \
+	solver.cpp \
+	navi.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
 .SUFFIXES: .cpp .o
 
-LDFLAGS = -Llib -lforeach -lop -lxmesh -lcusolver
+LDFLAGS = -Llib -lforeach -lxmesh -lcusolver
 
 all: $(PROG)
 $(PROG) : $(OBJS) main.cpp
-	(cd lib/op; make)
 	(cd lib/foreach; make)
 	(cd lib/xmesh; make)
 	$(CC) -g main.cpp $(OBJS) -o $@ $(LDFLAGS)
@@ -20,10 +20,10 @@ $(PROG) : $(OBJS) main.cpp
 	$(CC) -g -c -I. $<
 
 clean: ;
-	(cd lib/op; make clean)
 	(cd lib/foreach; make clean)
 	(cd lib/xmesh; make clean)
-	rm -f $(PROG) $(OBJS)
+	rm -f $(PROG) $(OBJS) 0000?.gz
 
 test: $(PROG)
+	./navi -test
 	../test/test.sh

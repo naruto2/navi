@@ -1,4 +1,5 @@
 #include "op.hpp"
+using namespace std;
 
 static int    argc;
 static char **argv;
@@ -19,7 +20,7 @@ int defop(string str)
 }
 
 
-string getop(string str)
+string op(string str)
 {
   int i;
 
