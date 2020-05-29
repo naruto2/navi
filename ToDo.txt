@@ -8,6 +8,8 @@ femesh版 op.hppに切り替える ... Done 2020-5-30
 
 gnuplot のエラーメッセージを消す ... Done 2020-5-30
 
+foreachをリファクタリングする ... Done 2020-5-30
+
 xmesh.hpp を femesh.hpp に切り替える
 
-foreachをリファクタリングする
+

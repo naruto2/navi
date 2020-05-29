@@ -1,9 +1,39 @@
-#include <vector>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
+#include <vector>
 #include "xmesh.hpp"
-
 using namespace std;
+
+
+double delta(int i, vector<xyc>&Z, vector<nde>&N)
+{
+  double xi, xj, xk, yi, yj, yk;
+
+  xi = Z[N[i].a].x;
+  xj = Z[N[i].b].x;
+  xk = Z[N[i].c].x;
+  yi = Z[N[i].a].y;
+  yj = Z[N[i].b].y;
+  yk = Z[N[i].c].y;
+  return (xi*yj+xj*yk+xk*yi-yi*xj-yj*xk-yk*xi)/2.0;
+}
+
+
+
+long dimp2(vector<nde>&N)
+{
+  long e, E;
+  int n=1;
+  E = N.size();
+  for(e=1; e<E; e++) {
+    n = max(n,N[e].A);
+    n = max(n,N[e].B);
+    n = max(n,N[e].C);
+  }
+  return n;
+}
+
 
 static FILE *fcopy(void){
   int c;
@@ -13,6 +43,7 @@ static FILE *fcopy(void){
   rewind(fp);
   return fp;
 }
+
 
 void f2mesh(FILE *fp, vector<xyc>&Z, vector<nde>&N){
   int m=0, n=0, i;
