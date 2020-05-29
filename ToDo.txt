@@ -1,0 +1,9 @@
+make test 用のスクリプトを作る
+
+foreachをリファクタリングする
+
+Makefileがあんまりなので整理する ... Done 2020-5-30
+
+README.mdに参考文献等を追記する ... Done 2020-5-30
+
+femesh版 op.hppに切り替える
