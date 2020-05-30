@@ -992,7 +992,7 @@ static vector<xyc> staticZ;
 static vector<nde> staticN;
 static vector<xyc> staticMid;
 
-int navierstokes_init(const char *filename, double Re, double dt,
+int initnavi(const char *filename, double Re, double dt,
 		      double (*upointer)(double x, double y),
 		      double (*vpointer)(double x, double y))
 {
@@ -1010,7 +1010,7 @@ int navierstokes_init(const char *filename, double Re, double dt,
 }
 
 
-void navierstokes(matrix<double>&A, vector<double>&U, vector<double>&b)
+void navi(matrix<double>&A, vector<double>&U, vector<double>&b)
 {
     makeA(A,U,b,staticZ,staticN,staticMid);
 }
