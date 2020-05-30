@@ -7,19 +7,370 @@
 #include <map>
 #include <vector>
 #include <unistd.h>
-#include "P2_P1.hpp"
-#include "mij.hpp"
-#include "axij.hpp"
-#include "ayij.hpp"
-#include "dij.hpp"
-#include "hxij.hpp"
-#include "hyij.hpp"
-//#include "est/sparse.hpp"
-//#include "est/bicgstab.hpp"
-#include "xmesh.hpp"
 #include "foreach.hpp"
-//#include "est/solver.hpp"
 #include "matrix.hpp"
+#include "femesh.hpp"
+
+
+static double B1=0.0, B2=0.0, C1=0.0, C2=0.0;
+
+void setB1B2C1C2(double b1, double b2, double c1, double c2) {
+  B1 = b1; B2 = b2; C1 = c1; C2 = c2;
+}
+
+
+static double a(long i){
+  switch(i) {
+  case 1: return  0.0;
+  case 2: return  0.0;
+  case 3: return  1.0;
+  case 4: return  0.0;
+  case 5: return  0.0;
+  case 6: return  0.0;
+  default: abort();
+  }
+  abort();
+  return NAN;
+}
+
+
+static double b(long i){
+  switch(i) {
+  case 1: return -1.0;
+  case 2: return  0.0;
+  case 3: return -3.0;
+  case 4: return  0.0;
+  case 5: return  4.0;
+  case 6: return  0.0;
+  default: abort();
+  }
+  abort();
+  return NAN;
+}
+
+
+static double c(long i){
+  switch(i) {
+  case 1: return  0.0;
+  case 2: return -1.0;
+  case 3: return -3.0;
+  case 4: return  4.0;
+  case 5: return  0.0;
+  case 6: return  0.0;
+  default: abort();
+  }
+  abort();
+  return NAN;
+}
+
+
+static double d(long i){
+  switch(i) {
+  case 1: return  0.0;
+  case 2: return  0.0;
+  case 3: return  4.0;
+  case 4: return -4.0;
+  case 5: return -4.0;
+  case 6: return  4.0;
+  default: abort();
+  }
+  abort();
+  return NAN;
+}
+
+
+static double e(long i){
+  switch(i) {
+  case 1: return  2.0;
+  case 2: return  0.0;
+  case 3: return  2.0;
+  case 4: return  0.0;
+  case 5: return -4.0;
+  case 6: return  0.0;
+  default: abort();
+  }
+  abort();
+  return NAN;
+}
+
+
+static double f(long i){
+  switch(i) {
+  case 1: return  0.0;
+  case 2: return  2.0;
+  case 3: return  2.0;
+  case 4: return -4.0;
+  case 5: return  0.0;
+  case 6: return  0.0;
+  default: abort();
+  }
+  abort();
+  return NAN;
+}
+
+
+static double alphaB(long j)
+{
+  switch(j){
+  case 1:
+  case 2:
+  case 3:
+  case 4:
+  case 5:
+  case 6: return b(j)*B1 + c(j)*B2;
+  default: abort();
+  }
+  abort();
+  return NAN;
+}
+
+
+static double betaB(long j)
+{
+  switch(j){
+  case 1:
+  case 2:
+  case 3:
+  case 4:
+  case 5:
+  case 6: return 2.0*e(j)*B1 + d(j)*B2;
+  default: abort();
+  }
+  abort();
+  return NAN;
+}
+
+
+static double gammaB(long j)
+{
+  switch(j){
+  case 1:
+  case 2:
+  case 3:
+  case 4:
+  case 5:
+  case 6: return d(j)*B1 + 2.0*f(j)*B2;
+  default: abort();
+  }
+  abort();
+  return NAN;
+}
+
+
+static double alphaC(long j)
+{
+  switch(j){
+  case 1:
+  case 2:
+  case 3:
+  case 4:
+  case 5:
+  case 6: return b(j)*C1 + c(j)*C2;
+  default: abort();
+  }
+  abort();
+  return NAN;
+}
+
+
+static double betaC(long j)
+{
+  switch(j){
+  case 1:
+  case 2:
+  case 3:
+  case 4:
+  case 5:
+  case 6: return 2.0*e(j)*C1 + d(j)*C2;
+  default: abort();
+  }
+  abort();
+  return NAN;
+}
+
+
+static double gammaC(long j)
+{
+  switch(j){
+  case 1:
+  case 2:
+  case 3:
+  case 4:
+  case 5:
+  case 6: return d(j)*C1 + 2.0*f(j)*C2;
+  default: abort();
+  }
+  abort();
+  return NAN;
+}
+
+
+static double ad(long j){
+  switch(j) {
+  case 1: return  0.0;
+  case 2: return  0.0;
+  case 3: return  1.0;
+  default: abort();
+  }
+  abort();
+  return NAN;
+}
+
+
+static double bd(long j){
+  switch(j) {
+  case 1: return  1.0;
+  case 2: return  0.0;
+  case 3: return -1.0;
+  default: abort();
+  }
+  abort();
+  return NAN;
+}
+
+
+static double cd(long j){
+  switch(j) {
+  case 1: return  0.0;
+  case 2: return  1.0;
+  case 3: return -1.0;
+  default: abort();
+  }
+  abort();
+  return NAN;
+}
+
+static double mij(long i, long j, double delta)
+{
+  return  (delta/180.0)*
+    (
+     180.0 * (  a(i)*a(j)                                                                                       )
+     +60.0  * (  a(i)*b(j) + b(i)*a(j) + a(i)*c(j) + c(i)*a(j)                                                  )
+     +15.0  * (  a(i)*d(j) + d(i)*a(j) + b(i)*c(j) + c(i)*b(j)                                                  )
+     +30.0  * (  b(i)*b(j) + c(i)*c(j) + a(i)*e(j) + e(i)*a(j) + a(i)*f(j) + f(i)*a(j)                          )
+     +18.0  * (  b(i)*e(j) + e(i)*b(j) + c(i)*f(j) + f(i)*c(j)                                                  )
+     + 6.0  * (  b(i)*d(j) + d(i)*b(j) + c(i)*e(j) + e(i)*c(j) + b(i)*f(j) + f(i)*b(j) + c(i)*d(j) + d(i)*c(j)  )
+     + 2.0  * (  d(i)*d(j) + e(i)*f(j) + f(i)*e(j)                                                              )
+     + 3.0  * (  d(i)*e(j) + e(i)*d(j) + d(i)*f(j) + f(i)*d(j)                                                  )
+     +12.0  * (  e(i)*e(j) + f(i)*f(j)                                                                          )
+     );
+}
+
+
+static double axij(long i, long j, double *u, double B1, double B2, double B3)
+{
+  double Au=0.0, Bu=0.0, Cu=0.0, Du=0.0, Eu=0.0, Fu=0.0,
+         alphaBj, betaBj, gammaBj, axij;
+
+  for (long k = 1; k <= 6; k++) {
+    Au += a(k)*u[k];
+    Bu += b(k)*u[k];
+    Cu += c(k)*u[k];
+    Du += d(k)*u[k];
+    Eu += e(k)*u[k];
+    Fu += f(k)*u[k];
+  }
+  alphaBj =     b(j)*B1 +     c(j)*B2;
+  betaBj  = 2.0*e(j)*B1 +     d(j)*B2;
+  gammaBj =     d(j)*B1 + 2.0*f(j)*B2;
+
+  axij =
+  + 420.0 * (a(i)*Au                     ) * (3.0*alphaBj +     betaBj +     gammaBj)
+  + 105.0 * (a(i)*Bu + b(i)*Au           ) * (4.0*alphaBj + 2.0*betaBj +     gammaBj)
+  + 105.0 * (a(i)*Cu + c(i)*Au           ) * (4.0*alphaBj +     betaBj + 2.0*gammaBj)
+  +  21.0 * (a(i)*Du + d(i)*Au           ) * (5.0*alphaBj + 2.0*betaBj + 2.0*gammaBj)
+  +  21.0 * (b(i)*Cu + c(i)*Bu           ) * (5.0*alphaBj + 2.0*betaBj + 2.0*gammaBj)
+  +  42.0 * (a(i)*Eu + e(i)*Au + b(i)*Bu ) * (5.0*alphaBj + 3.0*betaBj +     gammaBj)
+  +  42.0 * (a(i)*Fu + f(i)*Au + c(i)*Cu ) * (5.0*alphaBj +     betaBj + 3.0*gammaBj)
+  +   7.0 * (b(i)*Du + d(i)*Bu           ) * (6.0*alphaBj + 3.0*betaBj + 2.0*gammaBj)
+  +   7.0 * (c(i)*Eu + e(i)*Cu           ) * (6.0*alphaBj + 3.0*betaBj + 2.0*gammaBj)
+  +   7.0 * (b(i)*Fu + f(i)*Bu           ) * (6.0*alphaBj + 2.0*betaBj + 3.0*gammaBj)
+  +   7.0 * (c(i)*Du + d(i)*Cu           ) * (6.0*alphaBj + 2.0*betaBj + 3.0*gammaBj)
+  +  21.0 * (b(i)*Eu + e(i)*Bu           ) * (6.0*alphaBj + 4.0*betaBj +     gammaBj)
+  +  21.0 * (c(i)*Fu + f(i)*Cu           ) * (6.0*alphaBj +     betaBj + 4.0*gammaBj)
+  +   3.0 * (d(i)*Eu + e(i)*Du           ) * (7.0*alphaBj + 4.0*betaBj + 2.0*gammaBj)
+  +   3.0 * (d(i)*Fu + f(i)*Du           ) * (7.0*alphaBj + 2.0*betaBj + 4.0*gammaBj)
+  +   2.0 * (e(i)*Fu + f(i)*Eu + d(i)*Du ) * (7.0*alphaBj + 3.0*betaBj + 3.0*gammaBj)
+  +  12.0 * (e(i)*Eu                     ) * (7.0*alphaBj + 5.0*betaBj +     gammaBj)
+  +  12.0 * (f(i)*Fu                     ) * (7.0*alphaBj +     betaBj + 5.0*gammaBj)
+  ;
+  return axij/1260.0;
+}
+
+
+
+static double ayij(long i, long j, double *v, double C1, double C2, double C3)
+{
+  double Av=0.0, Bv=0.0, Cv=0.0, Dv=0.0, Ev=0.0, Fv=0.0,
+    alphaCj, betaCj, gammaCj, ayij;
+
+  for (long k = 1; k <= 6; k++) {
+    Av += a(k)*v[k];
+    Bv += b(k)*v[k];
+    Cv += c(k)*v[k];
+    Dv += d(k)*v[k];
+    Ev += e(k)*v[k];
+    Fv += f(k)*v[k];
+  }
+  alphaCj =     b(j)*C1 +     c(j)*C2;
+  betaCj  = 2.0*e(j)*C1 +     d(j)*C2;
+  gammaCj =     d(j)*C1 + 2.0*f(j)*C2;
+
+  ayij =
+    420.0 * (a(i)*Av                    ) * (3.0*alphaCj +     betaCj +     gammaCj)
+  + 105.0 * (a(i)*Bv + b(i)*Av          ) * (4.0*alphaCj + 2.0*betaCj +     gammaCj)
+  + 105.0 * (a(i)*Cv + c(i)*Av          ) * (4.0*alphaCj +     betaCj + 2.0*gammaCj)
+  +  21.0 * (a(i)*Dv + d(i)*Av          ) * (5.0*alphaCj + 2.0*betaCj + 2.0*gammaCj)
+  +  21.0 * (b(i)*Cv + c(i)*Bv          ) * (5.0*alphaCj + 2.0*betaCj + 2.0*gammaCj)
+  +  42.0 * (a(i)*Ev + e(i)*Av + b(i)*Bv) * (5.0*alphaCj + 3.0*betaCj +     gammaCj)
+  +  42.0 * (a(i)*Fv + f(i)*Av + c(i)*Cv) * (5.0*alphaCj +     betaCj + 3.0*gammaCj)
+  +   7.0 * (b(i)*Dv + d(i)*Bv          ) * (6.0*alphaCj + 3.0*betaCj + 2.0*gammaCj)
+  +   7.0 * (c(i)*Ev + e(i)*Cv          ) * (6.0*alphaCj + 3.0*betaCj + 2.0*gammaCj)
+  +   7.0 * (b(i)*Fv + f(i)*Bv          ) * (6.0*alphaCj + 2.0*betaCj + 3.0*gammaCj)
+  +   7.0 * (c(i)*Dv + d(i)*Cv          ) * (6.0*alphaCj + 2.0*betaCj + 3.0*gammaCj)
+  +  21.0 * (b(i)*Ev + e(i)*Bv          ) * (6.0*alphaCj + 4.0*betaCj +     gammaCj)
+  +  21.0 * (c(i)*Fv + f(i)*Cv          ) * (6.0*alphaCj +     betaCj + 4.0*gammaCj)
+  +   3.0 * (d(i)*Ev + e(i)*Dv          ) * (7.0*alphaCj + 4.0*betaCj + 2.0*gammaCj)
+  +   3.0 * (d(i)*Fv + f(i)*Dv          ) * (7.0*alphaCj + 2.0*betaCj + 4.0*gammaCj)
+  +   2.0 * (e(i)*Fv + f(i)*Ev + d(i)*Dv) * (7.0*alphaCj + 3.0*betaCj + 3.0*gammaCj)
+  +  12.0 * (e(i)*Ev                    ) * (7.0*alphaCj + 5.0*betaCj +     gammaCj)
+  +  12.0 * (f(i)*Fv                    ) * (7.0*alphaCj +     betaCj + 5.0*gammaCj)
+  ;
+  return ayij/1260.0;
+}
+
+
+static double dij(long i, long j)
+{
+  return (1.0/12.0) * ( 12.0  *(alphaB(i)*alphaB(j) + alphaC(i)*alphaC(j))
+                          + 4.0 *(alphaB(i)* betaB(j) +  betaB(i)*alphaB(j) + alphaB(i)*gammaB(j) + gammaB(i)*alphaB(j))
+                          + 4.0 *(alphaC(i)* betaC(j) +  betaC(i)*alphaC(j) + alphaC(i)*gammaC(j) + gammaC(i)*alphaC(j))
+                          + 1.0 *( betaB(i)*gammaB(j) + gammaB(i)* betaB(j) +  betaC(i)*gammaC(j) + gammaC(i)* betaC(j))
+                          + 2.0 *( betaB(i)* betaB(j) + gammaB(i)*gammaB(j) +  betaC(i)* betaC(j) + gammaC(i)*gammaC(j)) );
+}
+
+
+static double hxij(long i, long j)
+{
+  return (1.0/12.0) * (12.0*(alphaB(i)*ad(j))
+                         +4.0*( betaB(i)*ad(j) + alphaB(i)*bd(j) + gammaB(i)*ad(j) + alphaB(i)*cd(j))
+                         +1.0*( betaB(i)*cd(j) + gammaB(i)*bd(j))
+                         +2.0*( betaB(i)*bd(j) + gammaB(i)*cd(j))                                     );
+}
+
+
+static double hyij(long i, long j)
+{
+  return (1.0/12.0) * (12.0*(alphaC(i)*ad(j))
+                         +4.0*( betaC(i)*ad(j) + alphaC(i)*bd(j) + gammaC(i)*ad(j) + alphaC(i)*cd(j))
+                         +1.0*( betaC(i)*cd(j) + gammaC(i)*bd(j))
+                         +2.0*( betaC(i)*bd(j) + gammaC(i)*cd(j))                                     );
+}
+
+
+extern void f2mesh(FILE*, std::vector<xyc>&, std::vector<nde>&);
+extern long dimp2(std::vector<nde>&N);
+extern double delta(int, std::vector<xyc>&, std::vector<nde>&);
 
 using namespace std;
 

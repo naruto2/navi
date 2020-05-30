@@ -17,7 +17,7 @@ $(PROG) : $(OBJS) main.cpp
 	$(CC) -g main.cpp $(OBJS) -o $@ $(LDFLAGS)
 
 .cpp.o:
-	$(CC) -g -c -I. $<
+	$(CC) -g -c $<
 
 clean: ;
 	rm -f $(PROG) $(OBJS) 0000?.gz
