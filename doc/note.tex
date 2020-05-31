@@ -1,4 +1,5 @@
 \documentclass{jarticle}
+\usepackage{graphicx}
 \begin{document}
 \section{ナビエ・ストークス方程式系の離散化}
 非圧縮性の粘性流体の挙動を数理的にとらえるためには、ナビエ・ストークス方程
@@ -263,6 +264,172 @@ $
 \displaystyle
 \sum_{e=1}^N\left[\int\int_{\Omega_e} p^*\left(\frac{\partial u}{\partial x}+\frac{\partial v}{\partial y}\right)dxdy\right] = 0
 \end{equation}
+
+
+
+\section{面積座標の定義}
+
+\begin{figure}
+\begin{center} 
+\includegraphics[width=10cm]{area_coordinates.eps}
+\caption{三角形要素と三つの小三角形領域}
+\end{center}
+\end{figure}
+
+
+図1の三角形要素に注目する。三角形要素内の任意の1点$P(x,y)$と
+3頂点$P_1,P_2,P_3$をそれぞれ直線で繋いで要素内を三つの小三角形領域に分割する。
+
+\begin{center}
+\begin{tabular}{lll}
+  $頂点a$&...&$P_1(x_1,y_1)$\\
+  $頂点b$&...&$P_2(x_2,y_2)$\\
+  $頂点c$&...&$P_3(x_3,y_3)$\\
+  $中点A$&...&$P_4(\frac{x_2+x_3}{2},\frac{y_2+y_3}{2})$\\
+  $中点B$&...&$P_5(\frac{x_3+x_1}{2},\frac{y_3+y_1}{2})$\\
+  $中点C$&...&$P_6(\frac{x_1+x_2}{2},\frac{y_1+y_2,}{2})$\\
+  $\Delta_1$&...&小三角形$PP_2 P_3$の面積\\
+  $\Delta_2$&...&小三角形$PP_3 P_1$の面積\\
+  $\Delta_3$&...&小三角形$PP_1 P_2$の面積\\
+  $\Delta_e$&...&三角形$P_1 P_2 P_3$の面積
+\end{tabular}
+\end{center}
+
+\begin{equation}
+\displaystyle
+L_1 = \frac{\Delta_1}{\Delta_e},
+L_2 = \frac{\Delta_2}{\Delta_e},
+L_3 = \frac{\Delta_3}{\Delta_e}
+\end{equation}
+
+
+定義式(20)のように$L_1, L_2, L_3$を定義すると、この3つのスカラーの間には
+次の関係式が成り立つ。
+
+\begin{equation}
+\displaystyle
+L_1 + L_2 + L_3 = 1
+\end{equation}
+
+$(L_1,L_2,L_3)$を面積座標と呼ぶ。
+
+
+
+\begin{center}
+\begin{tabular}{llll}
+  $頂点a$&...&$P_1(x_1,y_1)$&=面積座標(1,0,0)\\
+  $頂点b$&...&$P_2(x_2,y_2)$&=面積座標(0,1,0)\\
+  $頂点c$&...&$P_3(x_3,y_3)$&=面積座標(0,0,1)\\
+  $中点A$&...&$P_4(\frac{x_2+x_3}{2},\frac{y_2+y_3}{2})$&$=面積座標(0,\frac{1}{2},\frac{1}{2})$\\
+  $中点B$&...&$P_5(\frac{x_3+x_1}{2},\frac{y_3+y_1}{2})$&$=面積座標(0,\frac{1}{2},\frac{1}{2})$\\
+  $中点C$&...&$P_6(\frac{x_1+x_2}{2},\frac{y_1+y_2,}{2})$&$=面積座標(0,\frac{1}{2},\frac{1}{2})$
+\end{tabular}
+\end{center}
+
+
+\begin{equation}
+  \Delta_e = \frac{1}{2}\left|\begin{array}{ccc}
+  1&1&1\\
+  x_1&x_2&x_3\\
+  y_1&y_2&y_3
+  \end{array}\right|=x_1 y_2 + x_2 y_3 + x_3 y_1- y_1 x_2 - y_2 x_3 - y_3 x_1
+\end{equation}
+
+
+\begin{equation}
+  \Delta_1 = \frac{1}{2}\left|\begin{array}{ccc}
+  1&1&1\\
+  x&x_2&x_3\\
+  y&y_2&y_3
+  \end{array}\right|=x y_2 + x_2 y_3 + x_3 y- y x_2 - y_2 x_3 - y_3 x
+\end{equation}
+
+
+\begin{equation}
+  \Delta_2 = \frac{1}{2}\left|\begin{array}{ccc}
+  1&1&1\\
+  x_1&x&x_3\\
+  y_1&y&y_3
+  \end{array}\right|=x_1 y + x y_3 + x_3 y_1- y_1 x - y x_3 - y_3 x_1
+\end{equation}
+
+
+\begin{equation}
+  \Delta_3 = \frac{1}{2}\left|\begin{array}{ccc}
+  1&1&1\\
+  x_1&x_2&x\\
+  y_1&y_2&y
+  \end{array}\right|=x_1 y_2 + x_2 y + x y_1- y_1 x_2 - y_2 x - y x_1
+\end{equation}
+
+\begin{equation}
+  L_1 = \frac{\Delta_1}{\Delta_e} = \frac{(y_2-y_3)x-(x_2-x_3)y +x_2 y_3 - y_2 x_3}{\Delta_e}
+\end{equation}
+
+
+\begin{equation}
+  L_2 = \frac{\Delta_1}{\Delta_e} = \frac{(y_1-y_2)x-(x_1-x_2)y +x_1 y_2 - y_1 x_2}{\Delta_e}
+\end{equation}
+
+
+\begin{equation}
+  L_3 = \frac{\Delta_1}{\Delta_e} = \frac{(y_3-y_1)x-(x_3-x_1)y +x_3 y_1 - y_3 x_1}{\Delta_e}
+\end{equation}
+
+$L_1, L_2, L_3$を具体的に計算した。
+それぞれ$x,y$の一次関数であることが見て取れる。
+
+\section{形状関数ベクトル}
+
+
+
+\subsection{1次要素}
+\begin{equation}
+  K_e = \left\{\begin{array}{c}
+      L_1\\
+      L_2\\
+      L_3
+  \end{array}\right\} = \left\{\begin{array}{c}
+  \frac{(y_2-y_3)x-(x_2-x_3)y +x_2 y_3 - y_2 x_3}{\Delta_e}\\
+  \frac{(y_3-y_1)x-(x_3-x_1)y +x_3 y_1 - y_3 x_1}{\Delta_e}\\
+  \frac{(y_1-y_2)x-(x_1-x_2)y +x_1 y_2 - y_1 x_2}{\Delta_e}
+  \end{array}\right\}
+\end{equation}
+
+\subsection{2次要素}
+\begin{equation}
+N_e = \left\{\begin{array}{c}
+      L_1(2L_1-1)\\
+      L_2(2L_2-1)\\
+      L_3(2L_3-1)\\
+      4L_2L_3\\
+      4L_1L_2\\
+      4L_3L_1
+\end{array}\right\}
+\end{equation}
+\[
+  L_1(2L_1-1)= \frac{1}{\Delta_e^2}\left\{
+  2(y_2-y_3)^2x^2+2(x_2-x_3)^2y^2-4(x_2-x_3)(y_2-y_3)xy\right.
+\]
+\[\left.
++(y_2-y_3)(4x_2y_3-4y_2x_3-1)x-(x_2-x_3)(4x_2y_3-4x_2y_3-1)y+(x_2y_3-y_2x_3)(2x_2y_3-2y_2x_3-1)\right\}
+\]
+
+\[
+  L_2(2L_2-1)= \frac{1}{\Delta_e^2}\left\{
+  2(y_3-y_1)^2x^2+2(x_3-x_1)^2y^2-4(x_3-x_1)(y_3-y_1)xy\right.
+\]
+\[\left.
++(y_3-y_1)(4x_3y_1-4y_3x_1-1)x-(x_3-x_1)(4x_3y_1-4x_3y_1-1)y+(x_3y_1-y_3x_1)(2x_3y_1-2y_3x_1-1)\right\}
+\]
+
+\[
+  L_3(2L_3-1)= \frac{1}{\Delta_e^2}\left\{
+  2(y_1-y_2)^2x^2+2(x_1-x_2)^2y^2-4(x_1-x_2)(y_1-y_2)xy\right.
+\]
+\[\left.
++(y_1-y_2)(4x_1y_2-4y_1x_2-1)x-(x_1-x_2)(4x_1y_2-4x_1y_2-1)y+(x_1y_2-y_1x_2)(2x_1y_2-2y_1x_2-1)\right\}
+\]
 
 
 
