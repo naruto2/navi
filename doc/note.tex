@@ -1,0 +1,269 @@
+\documentclass{jarticle}
+\begin{document}
+\section{ナビエ・ストークス方程式系の離散化}
+非圧縮性の粘性流体の挙動を数理的にとらえるためには、ナビエ・ストークス方程
+式と非圧縮性より導かれる連続の方程式とを連立した上で、 初期条件や境界条件を
+与えて解くことになる。 ナビエ・ストークス方程式に非圧縮性の条件式を連立させた
+方程式をナビエ・ストークス方程式系と呼ぶ。
+
+
+\begin{equation}
+\left.
+\begin{tabular}{l}
+$\displaystyle
+\frac{\partial u}{\partial t}+u\frac{\partial u}{\partial x}+v\frac{\partial u}{\partial y} = -\frac{\partial p}{\partial x}+\frac{1}{Re}(\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2})+X$\\
+$\displaystyle  
+\frac{\partial v}{\partial t}+u\frac{\partial v}{\partial x}+v\frac{\partial v}{\partial y} = -\frac{\partial p}{\partial y}+\frac{1}{Re}(\frac{\partial^2 v}{\partial x^2}+\frac{\partial^2 v}{\partial y^2})+Y$
+\end{tabular}
+\right\}
+\end{equation}
+
+\theequation はナビエ・ストークス方程式(勾配型),
+
+\begin{equation}
+\displaystyle
+  \frac{\partial u}{\partial x}+\frac{\partial v}{\partial y} = 0
+\end{equation}
+
+\theequation は連続の方程式である。
+
+上記の速度(U)と圧力(P)を未知量とする定式化を原始変数法(primitive variable method)と呼ぶ。2次元から3次元への拡張も可能である。
+
+これに対して、渦度と流れ関数を用いる表現に流れ関数渦度法がある。
+離散化した時の行列次元が小さい、及び連続の方程式を厳密に満たすというメリット
+があるが、2次元解析にしか用いることが出来ない。
+
+
+\section{弱形式の導出}
+
+有限要素法による離散化の基礎となる弱形式を導く。
+ナビエ・ストークス方程式の第1式、第2式に対する重み関数をそれぞれ
+$u^*$、$v^*$とし、連速の方程式に対する重み関数を$p^*$とする。
+
+ここに$u$は、$x$軸方向の速度成分、$v$は$y$軸方向の速度成分であるから、
+重み関数$u^*$、$v^*$も同じ関数形であると仮定する。
+
+また、連続の方程式は圧力$p$のため式と考える。
+
+ナビエ・ストークス方程式の1、2式にそれぞれ$u^*$、$v^*$を乗じ、
+連続の方程式に$p^*$を乗じると次の3式になる。
+
+
+\begin{equation}
+\left.
+\begin{tabular}{l}
+$\displaystyle
+u^*\left[\frac{\partial u}{\partial t}+u\frac{\partial u}{\partial x}+v\frac{\partial u}{\partial y}+\frac{\partial p}{\partial x}-\frac{1}{Re}(\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2})-X\right]=0$\\
+$\displaystyle  
+v^*\left[\frac{\partial v}{\partial t}+u\frac{\partial v}{\partial x}+v\frac{\partial v}{\partial y}+\frac{\partial p}{\partial y}-\frac{1}{Re}(\frac{\partial^2 v}{\partial x^2}+\frac{\partial^2 v}{\partial y^2})-Y\right]=0$
+\end{tabular}
+\right\}
+\end{equation}
+
+\theequation はナビエ・ストークス方程式(勾配型),
+
+\begin{equation}
+\displaystyle
+p^*\left(\frac{\partial u}{\partial x}+\frac{\partial v}{\partial y}\right) = 0
+\end{equation}
+
+\theequation は連続の方程式である。
+
+
+上の3本の式を計算領域$\Omega$で積分する。
+
+
+
+\begin{equation}
+\left.
+\begin{tabular}{l}
+$\displaystyle
+\int\int_\Omega u^*\left[\frac{\partial u}{\partial t}+u\frac{\partial u}{\partial x}+v\frac{\partial u}{\partial y}+\frac{\partial p}{\partial x}-\frac{1}{Re}(\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2})-X\right]dxdy=0$\\
+$\displaystyle  
+\int\int_\Omega v^*\left[\frac{\partial v}{\partial t}+u\frac{\partial v}{\partial x}+v\frac{\partial v}{\partial y}+\frac{\partial p}{\partial y}-\frac{1}{Re}(\frac{\partial^2 v}{\partial x^2}+\frac{\partial^2 v}{\partial y^2})-Y\right]dxdy=0$
+\end{tabular}
+\right\}
+\end{equation}
+
+\theequation はナビエ・ストークス方程式(勾配型),
+
+\begin{equation}
+\displaystyle
+\int\int_\Omega p^*\left(\frac{\partial u}{\partial x}+\frac{\partial v}{\partial y}\right)dxdy = 0
+\end{equation}
+
+\theequation は連続の方程式である。
+
+ガウスの発散定理を用いて、
+(5)(6)左辺の圧力項と粘性応力項(Reを含む項)を部分積分し、
+以下の境界条件(9)を考慮する。
+
+\begin{equation}
+\begin{tabular}{ll}
+  $\displaystyle
+  u = \hat u, v = \hat v $&$on~~~ (\Gamma_1 上 流入境界条件)$\\
+\end{tabular}
+\end{equation}
+\begin{equation}
+\begin{tabular}{ll}
+  $\displaystyle
+  u = v = 0 $&$on~~~ (\Gamma_2 上 ディレクレ境界条件)$\\
+\end{tabular}
+\end{equation}
+\begin{equation}
+\begin{tabular}{ll}
+$\displaystyle
+  -pn_x+\frac{1}{Re}\frac{\partial u}{\partial n} = -pn_y+\frac{1}{Re}\frac{\partial v}{\partial n}=0 $&$on~~~ (\Gamma_3 上 ノイマン境界条件)$
+\end{tabular}
+\end{equation}
+
+
+\begin{equation}
+\begin{tabular}{l}
+$\displaystyle
+\int\int_\Omega u^*\left(\frac{\partial u}{\partial t}+u\frac{\partial u}{\partial x}+v\frac{\partial u}{\partial y}\right)dxdy - \int\int_\Omega\frac{\partial u^*}{\partial x}pdxdy
+$
+\\
+$\displaystyle
++\frac{1}{Re}\int\int_\Omega\left(\frac{\partial u^*}{\partial x}\frac{\partial u}{\partial x}+\frac{\partial u^*}{\partial y}\frac{\partial u}{\partial y}\right)dxdy-\int\int_\Omega u^*Xdxdy
+$
+\\
+$\displaystyle
+-\int_{\Gamma_1+\Gamma_2}u^*\left(\-pn_x+\frac{1}{Re}\frac{\partial u}{\partial n}\right)d\Gamma = 0
+$
+\end{tabular}
+\end{equation}
+
+\begin{equation}
+\begin{tabular}{l}
+$\displaystyle
+\int\int_\Omega v^*\left(\frac{\partial v}{\partial t}+u\frac{\partial v}{\partial x}+v\frac{\partial v}{\partial y}\right)dxdy - \int\int_\Omega\frac{\partial v^*}{\partial x}pdxdy
+$
+\\
+$\displaystyle
++\frac{1}{Re}\int\int_\Omega\left(\frac{\partial v^*}{\partial x}\frac{\partial v}{\partial x}+\frac{\partial v^*}{\partial y}\frac{\partial v}{\partial y}\right)dxdy-\int\int_\Omega v^*Ydxdy
+$
+\\
+$\displaystyle
+-\int_{\Gamma_1+\Gamma_2}v^*\left(\-pn_y+\frac{1}{Re}\frac{\partial v}{\partial n}\right)d\Gamma = 0
+$
+\end{tabular}
+\end{equation}
+
+この時点で、(10)(11)を満たす$uvp$を弱解(weak solution)と呼ぶ、
+$uvp$に十分な滑らさがなくて、
+(1)(2)を満たすことはなくても、(10)(11)を満足する解も考えることが
+できるからである。
+これに対して、(1)(2)を満たす解$uvp$は(10)(11)をも満たすが、これは
+強解(strong solution)と呼ぶ。
+
+
+(10)(11)に境界条件(7)(8)を考慮すると、$\Gamma_1$と$\Gamma_2$上では
+$u^*=v^*=0$とおくことができるので、(10)(11)の線積分の項は消えてくれる。
+そして次式のようになる。
+
+
+
+\begin{equation}
+\begin{tabular}{l}
+$\displaystyle
+\int\int_\Omega u^*\left(\frac{\partial u}{\partial t}+u\frac{\partial u}{\partial x}+v\frac{\partial u}{\partial y}\right)dxdy - \int\int_\Omega\frac{\partial u^*}{\partial x}pdxdy
+$
+\\
+$\displaystyle
++\frac{1}{Re}\int\int_\Omega\left(\frac{\partial u^*}{\partial x}\frac{\partial u}{\partial x}+\frac{\partial u^*}{\partial y}\frac{\partial u}{\partial y}\right)dxdy-\int\int_\Omega u^*Xdxdy=0
+$
+\end{tabular}
+\end{equation}
+
+\begin{equation}
+\begin{tabular}{l}
+$\displaystyle
+\int\int_\Omega v^*\left(\frac{\partial v}{\partial t}+u\frac{\partial v}{\partial x}+v\frac{\partial v}{\partial y}\right)dxdy - \int\int_\Omega\frac{\partial v^*}{\partial x}pdxdy
+$
+\\
+$\displaystyle
++\frac{1}{Re}\int\int_\Omega\left(\frac{\partial v^*}{\partial x}\frac{\partial v}{\partial x}+\frac{\partial v^*}{\partial y}\frac{\partial v}{\partial y}\right)dxdy-\int\int_\Omega v^*Ydxdy=0
+$
+\end{tabular}
+\end{equation}
+
+数式(12)(13)(6)が数式(1)(2)の弱形式である。
+
+\section{弱形式の離散化}
+
+
+$\Omega_e$をe番目の三角形要素の内部領域を表すとすると、
+$1\leq e \leq N(総要素数)$なるeに対して、
+以下の数式(14)(15)(16)が成り立つ。
+
+
+\begin{equation}
+\begin{tabular}{l}
+$\displaystyle
+\int\int_{\Omega_e} u^*\left(\frac{\partial u}{\partial t}+u\frac{\partial u}{\partial x}+v\frac{\partial u}{\partial y}\right)dxdy - \int\int_{\Omega_e}\frac{\partial u^*}{\partial x}pdxdy
+$
+\\
+$\displaystyle
++\frac{1}{Re}\int\int_{\Omega_e}\left(\frac{\partial u^*}{\partial x}\frac{\partial u}{\partial x}+\frac{\partial u^*}{\partial y}\frac{\partial u}{\partial y}\right)dxdy-\int\int_{\Omega_e} u^*Xdxdy=0
+$
+\end{tabular}
+\end{equation}
+
+\begin{equation}
+\begin{tabular}{l}
+$\displaystyle
+\int\int_{\Omega_e} v^*\left(\frac{\partial v}{\partial t}+u\frac{\partial v}{\partial x}+v\frac{\partial v}{\partial y}\right)dxdy - \int\int_{\Omega_e}\frac{\partial v^*}{\partial x}pdxdy
+$
+\\
+$\displaystyle
++\frac{1}{Re}\int\int_{\Omega_e}\left(\frac{\partial v^*}{\partial x}\frac{\partial v}{\partial x}+\frac{\partial v^*}{\partial y}\frac{\partial v}{\partial y}\right)dxdy-\int\int_{\Omega_e} v^*Ydxdy=0
+$
+\end{tabular}
+\end{equation}
+
+
+\begin{equation}
+\displaystyle
+\int\int_{\Omega_e} p^*\left(\frac{\partial u}{\partial x}+\frac{\partial v}{\partial y}\right)dxdy = 0
+\end{equation}
+
+
+各三角形要素$\Omega_e$において数式(14)(15)(16)が成り立っているのだから、
+全ての三角形要素$\Omega_1,\Omega_2,...\Omega_N$において総和を取った
+以下の式が成り立つ。
+
+
+\begin{equation}
+\begin{tabular}{l}
+$\displaystyle
+\sum_{e=1}^N\left[\int\int_{\Omega_e} u^*\left(\frac{\partial u}{\partial t}+u\frac{\partial u}{\partial x}+v\frac{\partial u}{\partial y}\right)dxdy - \int\int_{\Omega_e}\frac{\partial u^*}{\partial x}pdxdy\right.
+$
+\\
+$\displaystyle
+\left.+\frac{1}{Re}\int\int_{\Omega_e}\left(\frac{\partial u^*}{\partial x}\frac{\partial u}{\partial x}+\frac{\partial u^*}{\partial y}\frac{\partial u}{\partial y}\right)dxdy-\int\int_{\Omega_e} u^*Xdxdy\right]=0
+$
+\end{tabular}
+\end{equation}
+
+\begin{equation}
+\begin{tabular}{l}
+$\displaystyle
+\sum_{e=1}^N\left[\int\int_{\Omega_e} v^*\left(\frac{\partial v}{\partial t}+u\frac{\partial v}{\partial x}+v\frac{\partial v}{\partial y}\right)dxdy - \int\int_{\Omega_e}\frac{\partial v^*}{\partial x}pdxdy\right.
+$
+\\
+$\displaystyle
+\left.+\frac{1}{Re}\int\int_{\Omega_e}\left(\frac{\partial v^*}{\partial x}\frac{\partial v}{\partial x}+\frac{\partial v^*}{\partial y}\frac{\partial v}{\partial y}\right)dxdy-\int\int_{\Omega_e} v^*Ydxdy\right]=0
+$
+\end{tabular}
+\end{equation}
+
+
+\begin{equation}
+\displaystyle
+\sum_{e=1}^N\left[\int\int_{\Omega_e} p^*\left(\frac{\partial u}{\partial x}+\frac{\partial v}{\partial y}\right)dxdy\right] = 0
+\end{equation}
+
+
+
+\end{document}
