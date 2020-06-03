@@ -265,17 +265,17 @@ $
 \sum_{e=1}^N\left[\int\int_{\Omega_e} p^*\left(\frac{\partial u}{\partial x}+\frac{\partial v}{\partial y}\right)dxdy\right] = 0
 \end{equation}
 
-
+領域$\Omega_e$における流速と圧力の離散化を行うため、面積座標を導入する。
+それから、C++との関係を確認した上で、面積座標を用いた形状関数ベクトルを用いて離散化の続きを行う。
 
 \section{面積座標の定義}
 
-\begin{figure}
+\begin{figure}[h]
 \begin{center} 
 \includegraphics[width=10cm]{area_coordinates.eps}
 \caption{三角形要素と三つの小三角形領域}
 \end{center}
 \end{figure}
-
 
 図1の三角形要素に注目する。三角形要素内の任意の1点$P(x,y)$と
 3頂点$P_1,P_2,P_3$をそれぞれ直線で繋いで要素内を三つの小三角形領域に分割する。
@@ -321,8 +321,8 @@ $(L_1,L_2,L_3)$を面積座標と呼ぶ。
   $頂点b$&...&$P_2(x_2,y_2)$&=面積座標(0,1,0)\\
   $頂点c$&...&$P_3(x_3,y_3)$&=面積座標(0,0,1)\\
   $中点A$&...&$P_4(\frac{x_2+x_3}{2},\frac{y_2+y_3}{2})$&$=面積座標(0,\frac{1}{2},\frac{1}{2})$\\
-  $中点B$&...&$P_5(\frac{x_3+x_1}{2},\frac{y_3+y_1}{2})$&$=面積座標(0,\frac{1}{2},\frac{1}{2})$\\
-  $中点C$&...&$P_6(\frac{x_1+x_2}{2},\frac{y_1+y_2,}{2})$&$=面積座標(0,\frac{1}{2},\frac{1}{2})$
+  $中点B$&...&$P_5(\frac{x_3+x_1}{2},\frac{y_3+y_1}{2})$&$=面積座標(\frac{1}{2},0,\frac{1}{2})$\\
+  $中点C$&...&$P_6(\frac{x_1+x_2}{2},\frac{y_1+y_2,}{2})$&$=面積座標(\frac{1}{2},\frac{1}{2},0)$
 \end{tabular}
 \end{center}
 
@@ -390,9 +390,9 @@ $L_1, L_2, L_3$を具体的に計算した。
       L_2\\
       L_3
   \end{array}\right\} = \left\{\begin{array}{c}
-  \frac{(y_2-y_3)x-(x_2-x_3)y +x_2 y_3 - y_2 x_3}{\Delta_e}\\
-  \frac{(y_3-y_1)x-(x_3-x_1)y +x_3 y_1 - y_3 x_1}{\Delta_e}\\
-  \frac{(y_1-y_2)x-(x_1-x_2)y +x_1 y_2 - y_1 x_2}{\Delta_e}
+  \frac{1}{\Delta e}\left\{(y_2-y_3)x-(x_2-x_3)y +x_2 y_3 - y_2 x_3\right\}\\
+  \frac{1}{\Delta e}\left\{(y_3-y_1)x-(x_3-x_1)y +x_3 y_1 - y_3 x_1\right\}\\
+  \frac{1}{\Delta e}\left\{(y_1-y_2)x-(x_1-x_2)y +x_1 y_2 - y_1 x_2\right\}\\
   \end{array}\right\}
 \end{equation}
 
@@ -403,8 +403,8 @@ N_e = \left\{\begin{array}{c}
       L_2(2L_2-1)\\
       L_3(2L_3-1)\\
       4L_2L_3\\
-      4L_1L_2\\
-      4L_3L_1
+      4L_3L_1\\
+      4L_1L_2
 \end{array}\right\}
 \end{equation}
 \[
@@ -432,5 +432,118 @@ N_e = \left\{\begin{array}{c}
 \]
 
 
+\[
+4L_2L_3 = \frac{4}{\Delta_e^2}\left\{ (y_3-y_1)(y_1-y_2)x^2+(x_3-x_1)(x_1-x_2)y^2
+\right.\]\[\left.
+-((y_3-y_1)(x_1-x_2)+(x_3-x_1)(y_1-y_2))xy
++((y_3-y_1)(x_1x_2-y_1y_2)+(y_1-y_2)(x_3y_1-y_3x_1))x
+\right.\]\[\left.
+-((x_3-x_1)(x_1y_2-y1x_2)+(x_1-y_2)(x_3y_1-y_3x_1))y+(x_3y_1-y_3x_1)(x_1y_2-y1_x2) \right\}
+\]
 
+
+\[
+4L_3L_1 = \frac{4}{\Delta_e^2}\left\{ (y_1-y_2)(y_2-y_3)x^2+(x_1-x_2)(x_2-x_3)y^2
+\right.\]\[\left.
+-((y_1-y_2)(x_2-x_3)+(x_1-x_2)(y_2-y_3))xy
++((y_1-y_2)(x_2x_3-y_2y_3)+(y_2-y_3)(x_1y_2-y_1x_2))x
+\right.\]\[\left.
+-((x_1-x_2)(x_2y_3-y_2x_3)+(x_2-y_3)(x_1y_2-y_1x_2))y+(x_1y_2-y_1x_2)(x_2y_3-y2_x3) \right\}
+\]
+
+
+\[
+4L_1L_2 = \frac{4}{\Delta_e^2}\left\{ (y_2-y_3)(y_3-y_1)x^2+(x_2-x_3)(x_3-x_1)y^2
+\right.\]\[\left.
+-((y_2-y_3)(x_3-x_1)+(x_2-x_3)(y_3-y_1))xy
++((y_2-y_3)(x_3x_1-y_3y_1)+(y_3-y_1)(x_2y_3-y_2x_3))x
+\right.\]\[\left.
+-((x_2-x_3)(x_3y_1-y_3x_1)+(x_3-y_1)(x_2y_3-y_2x_3))y+(x_2y_3-y_2x_3)(x_3y_1-y3_x1) \right\}
+\]
+
+
+1次要素は$x,y$の1次関数、2次要素は$x,y$の2次関数になっている。
+また、$\Delta_e$は領域$\Omega_e$の面積である。
+
+\section{C++プログラムとの対応}
+
+\begin{verbatim}
+  typedef struct{ double x, y; char *label; } xyc;
+  typedef struct{ int a, b, c, A, B, C; } nde;
+\end{verbatim}
+
+xyc(xy coordinate)が節点-座標対応表、nde(node)が要素-節点対応表である。
+ここに要素-節点対応表Nの要素eに対して、以下の表記がプログラムで成される。
+また、Zは節点-座標対応表の(Zahyou)である
+
+節点-座標対応表における *labelには、境界条件を表す文字列が入っており、
+これを参照することによって、境界条件を実現することが出来る。
+
+\begin{center}
+\begin{tabular}{lllllll}
+  $頂点a$&...&N[e].a&P(Z[N[e].a].x,Z[N[e].a].y)&$P_1(x_1,y_1)$&=面積座標(1,0,0)\\
+  $頂点b$&...&N[e].b&P(Z[N[e].b].x,Z[N[e].b].y)&$P_2(x_2,y_2)$&=面積座標(0,1,0)\\
+  $頂点c$&...&N[e].c&P(Z[N[e].c].x,Z[N[e].c].y)&$P_3(x_3,y_3)$&=面積座標(0,0,1)\\
+  $中点A$&...&N[e].A&P(Z[N[e].A].x,Z[N[e].A].y)&$P_4(\frac{x_2+x_3}{2},\frac{y_2+y_3}{2})$&$=面積座標(0,\frac{1}{2},\frac{1}{2})$\\
+  $中点B$&...&N[e].B&P(Z[N[e].B].x,Z[N[e].B].y)&$P_5(\frac{x_3+x_1}{2},\frac{y_3+y_1}{2})$&$=面積座標(\frac{1}{2},0,\frac{1}{2})$\\
+  $中点C$&...&N[e].C&P(Z[N[e].C].x,Z[N[e].C].y)&$P_6(\frac{x_1+x_2}{2},\frac{y_1+y_2,}{2})$&$=面積座標(\frac{1}{2},\frac{1}{2},0)$
+\end{tabular}
+\end{center}
+
+
+例えば、以下のようにC++関数 dalta()を定義し、適切に設定されているZ,Nを用いると、
+De = delta(e,Z,N);とすることによって、要素eの面積を変数Deにセットすることが出来る。
+
+
+\begin{verbatim}
+double delta(int i, vector<xyc>&Z, vector<nde>&N)
+{
+  double xi, xj, xk, yi, yj, yk;
+
+  xi = Z[N[i].a].x;
+  xj = Z[N[i].b].x;
+  xk = Z[N[i].c].x;
+  yi = Z[N[i].a].y;
+  yj = Z[N[i].b].y;
+  yk = Z[N[i].c].y;
+  return (xi*yj+xj*yk+xk*yi-yi*xj-yj*xk-yk*xi)/2.0;
+}
+\end{verbatim}
+
+
+有限要素メッシュZ,Nを矛盾なく構成することは、一般に労力がかかる。要素数数百程度のものであっても、
+方眼紙に製図していき、座標を拾っていく作業は、慣れもあるだろうが、突貫工事でやったとしても１週間はかか
+るであろう。
+この単純ではあるが、ミスの許されない作業をプログラムで自動化しようというのは自然な欲求である。
+
+URL\footnote{https://github.com/naruto2/femesh.git}
+の注には、デローニー法を用いた要素自動分割のプログラムが利用出来る形で用意されている。
+
+
+\section{弱形式の離散化の続き}
+
+速度成分$u,v$に対する形状関数ベクトルを${\bf N}_e$、
+圧力$p$に対する形状関数ベクトルを${\bf K}_e$とし、
+三角形領域内部$\Omega_e$で、以下のように置き換える。
+
+\begin{equation}
+u = {\bf N}_e^T{\bf U}_e, ~~~ v = {\bf N}_e^T{\bf V}_e, ~~~ p = {\bf K}_e^T{\bf P}_e
+\end{equation}
+
+
+ここに、${\bf U}_e,{\bf V}_e,{\bf P}_e$はそれぞれ$u,v,p$の節点における値を成分とするベクトルである。
+また、重み関数についても同様に以下のように表す。
+
+\begin{equation}
+u^* = {\bf N}_e^T{\bf U}_e^*, ~~~ v^* = {\bf N}_e^T{\bf V}_e^*, ~~~ p^* = {\bf K}_e^T{\bf P}_e^*
+\end{equation}
+
+
+
+式(31)、(32)をナビエ・ストークス方程式の弱形式(17)(18)と連続の方程式の弱形式(19)に代入すると
+次のようになる。
+
+\[
+\sum_{e=1}^N\left[ \int\int_{\Omega_e}{\bf N}_e^T{\bf U}_e^*() \right]
+\]
 \end{document}
