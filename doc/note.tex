@@ -544,6 +544,172 @@ u^* = {\bf N}_e^T{\bf U}_e^*, ~~~ v^* = {\bf N}_e^T{\bf V}_e^*, ~~~ p^* = {\bf K
 次のようになる。
 
 \[
-\sum_{e=1}^N\left[ \int\int_{\Omega_e}{\bf N}_e^T{\bf U}_e^*() \right]
+\sum_{e=1}^N\left[ \int\int_{\Omega_e}{\bf N}_e^T{\bf U}_e^*(\frac{\partial{\bf N}_e^T}{\partial t}
+  + {\bf N}_e^T{\bf U}_e\frac{\partial {\bf N}_e^T{\bf U}_e}{\partial x}
+  + {\bf N}_e^T{\bf V}_e\frac{\partial {\bf N}_e^T{\bf U}_e}{\partial x})dxdy
+\right.\]\[
+- \int\int_{\Omega_e}\frac{\partial {\bf N}_e^T{\bf U}_e^*}{\partial x}{\bf K}_e^T {\bf P}_e dxdy
+\]\[
++\frac{1}{Re}\int\int_{\Omega_e}(
+\frac{\partial {\bf N}_e^T{\bf U}_e^*}{\partial x}\frac{\partial {\bf N}_e^T{\bf U}_e}{\partial x}
+\frac{\partial {\bf N}_e^T{\bf U}_e^*}{\partial y}\frac{\partial {\bf N}_e^T{\bf U}_e}{\partial y}
+)dxdy
+\]\begin{equation}
+\left.-\int\int_{\Omega_e}{\bf N}_e^T{\bf U}_e^* X dxdy \right] = 0
+\end{equation}
+
+\[
+\sum_{e=1}^N\left[ \int\int_{\Omega_e}{\bf N}_e^T{\bf V}_e^*(\frac{\partial{\bf N}_e^T}{\partial t}
+  + {\bf N}_e^T{\bf U}_e\frac{\partial {\bf N}_e^T{\bf V}_e}{\partial x}
+  + {\bf N}_e^T{\bf V}_e\frac{\partial {\bf N}_e^T{\bf V}_e}{\partial x})dxdy
+\right.\]\[
+- \int\int_{\Omega_e}\frac{\partial {\bf N}_e^T{\bf V}_e^*}{\partial x}{\bf K}_e^T {\bf P}_e dxdy
+\]\[
++\frac{1}{Re}\int\int_{\Omega_e}(
+\frac{\partial {\bf N}_e^T{\bf V}_e^*}{\partial x}\frac{\partial {\bf N}_e^T{\bf V}_e}{\partial x}
+\frac{\partial {\bf N}_e^T{\bf V}_e^*}{\partial y}\frac{\partial {\bf N}_e^T{\bf V}_e}{\partial y}
+)dxdy
+\]\begin{equation}
+\left.-\int\int_{\Omega_e}{\bf N}_e^T{\bf V}_e^* X dxdy \right] = 0
+\end{equation}
+
+
+\begin{equation}
+  \sum_{e=1}^N\left[ \int\int_{\Omega_e}{\bf K}_e^T{\bf P}_e^*(
+    \frac{\partial {\bf N}_e^T{\bf U}_e}{\partial x}
+    \frac{\partial {\bf N}_e^T{\bf V}_e}{\partial y}
+    )dxdy\right]=0
+\end{equation}
+
+
+ここで、${\bf M}_e, {\bf A}_e({\bf U}_e,{\bf V}_e), {\bf D}_e, {\bf H}_{xe}, {\bf H}_{ye}, {\bf F}_{xe}, {\bf F}_{ye}$を以下のように定義する。
+
+\begin{eqnarray}
+  {\bf M}_e&=&\int\int_{\Omega_e}{\bf N}_e{\bf N}_e^Tdxdy \\
+  {\bf A}_e({\bf U}_e,{\bf V}_e) &=& \int\int_{\Omega_e}{\bf N}_e(
+  {\bf N}_e^T{\bf U}_e\frac{\partial {\bf N}_e^T}{\partial x}
+ + {\bf N}_e^T{\bf V}_e\frac{\partial {\bf N}_e^T}{\partial y}
+  )dxdy\\
+ {\bf D}_e&=&\int\int_{\Omega_e}(
+ \frac{\partial{\bf N}_e}{\partial x}\frac{\partial{\bf N}_e^T}{\partial x}
++\frac{\partial{\bf N}_e}{\partial y}\frac{\partial{\bf N}_e^T}{\partial y}
+ )dxdy\\
+{\bf H}_{xe}&=&\int\int_{\Omega_e}\frac{\partial {\bf N}_e}{\partial x}{\bf K}_e^Tdxdy\\
+{\bf H}_{ye}&=&\int\int_{\Omega_e}\frac{\partial {\bf N}_e}{\partial y}{\bf K}_e^Tdxdy\\
+{\bf F}_{xe}&=&\int\int_{\Omega_e}{\bf N}_eXdxdy\\
+{\bf F}_{ye}&=&\int\int_{\Omega_e}{\bf N}_eYdxdy
+\end{eqnarray}
+
+(34)(35)(36)にこれらを代入して整理する。${\bf N}_e^T{\bf U}_e^* = ({\bf U}_e^*)^T{\bf N}_e$及び
+$\frac{\partial}{\partial t} = \frac{d}{dt}$も用いる。
+
+
+\begin{eqnarray}
+  \sum_{e=1}^N({\bf U}_e^*)^T\left[{\bf M}_e\frac{d{\bf U}_e}{dt}+{\bf A}_e({\bf U}_e,{\bf V}_e){\bf U}_e
+-{\bf H}_{xe}{\bf P}_e+\frac{1}{Re}{\bf D}_e{\bf U}_e-{\bf F}_{xe}\right]=0\\
+  \sum_{e=1}^N({\bf V}_e^*)^T\left[{\bf M}_e\frac{d{\bf V}_e}{dt}+{\bf A}_e({\bf U}_e,{\bf V}_e){\bf V}_e
+-{\bf H}_{ye}{\bf P}_e+\frac{1}{Re}{\bf D}_e{\bf U}_e-{\bf F}_{ye}\right]=0\\
+  \sum_{e=1}^N({\bf P}_e^*)^T\left[{\bf H}_{xe}^T{\bf U}_e+{\bf H}_{ye}^T{\bf V}_e\right]=0
+\end{eqnarray}
+
+重みベクトル${\bf U}_e^*,{\bf V}_e^*,{\bf P}_e^*$の任意性を考慮して、(43)(44)(45)式の
+大括弧内がゼロベクトルに等しいと置くと、$1\leq e\leq N$なる要素eに対して、
+以下の式が成り立つ。
+
+
+\begin{eqnarray}
+ {\bf M}_e\frac{d{\bf U}_e}{dt}+{\bf A}_e({\bf U}_e,{\bf V}_e){\bf U}_e
+-{\bf H}_{xe}{\bf P}_e+\frac{1}{Re}{\bf D}_e{\bf U}_e-{\bf F}_{xe}={\bf 0}\\
+ {\bf M}_e\frac{d{\bf V}_e}{dt}+{\bf A}_e({\bf U}_e,{\bf V}_e){\bf V}_e
+-{\bf H}_{ye}{\bf P}_e+\frac{1}{Re}{\bf D}_e{\bf U}_e-{\bf F}_{ye}={\bf 0}\\
+ {\bf H}_{xe}^T{\bf U}_e+{\bf H}_{ye}^T{\bf V}_e={\bf 0}
+\end{eqnarray}
+
+ここで、要素-節点対応表から要素1について具体的に計算してみる。
+\begin{verbatim}
+cavity32.mesh ... 要素数2052 頂点節点数1091
+<nde>
+   1    34    1    2  1092 1093 1094
+   2     2    3   36  1095 1096 1097
+   3     3    4   37  1098 1099 1100
+   4     4    5   38  1101 1102 1103
+   5     5    6   39  1104 1105 1106
+   (続く)
+\end{verbatim}
+上記の表より、要素1を構成する節点番号は $(a,b,c,A,B,C)=(34,1,2,1092,1093,1094)$であることがわかる。
+${\bf M}$を(頂点節点数+中点節点数)元の正方行列とすると、
+
+\[
+\left[\begin{array}{cccccc}
+m_{[34][34]} & m_{[34][1]} & m_{[34][2]} & m_{[34][1092]} & m_{[34][1093]} & m_{[34][1094]}\\
+m_{[ 1][34]} & m_{[1][1]} & m_{[1][2]} & m_{[1][1092]} & m_{[1][1093]} & m_{[1][1094]}\\
+m_{[ 2][34]} & m_{[2][1]} & m_{[2][2]} & m_{[2][1092]} & m_{[2][1093]} & m_{[2][1094]}\\
+m_{[1092][34]} & m_{[1092][1]} & m_{[1092][2]} & m_{[1092][1093]} & m_{[1092][1093]}&m_{[1092][1094]}\\
+m_{[1093][34]} & m_{[1093][1]} & m_{[1093][2]} & m_{[1093][1093]} & m_{[1093][1093]}&m_{[1093][1094]}\\
+m_{[1094][34]} & m_{[1094][1]} & m_{[1094][2]} & m_{[1094][1093]} & m_{[1094][1093]}&m_{[1094][1094]}
+\end{array}\right]
 \]
+
+\[
+=\int\int_{\Omega_1}{\bf N}_1{\bf N}_1^Tdxdy 
+\]
+
+
+\[
+=\int\int_{\Omega_1}\left\{\begin{array}{c}
+L_{34}(2L_{34}-1)\\
+L_{1}(2L-{1}-1)\\
+L_{2}(2L_{2}-1)\\
+4L_{1}L_{2}\\
+4L_{34}L_{1}\\
+4L_{2}L_{34}
+\end{array}\right\}(
+L_{34}(2L_{34}-1),
+L_{1}(2L-{1}-1),
+L_{2}(2L_{2}-1),
+4L_{1}L_{2},
+4L_{34}L_{1},
+4L_{2}L_{34}
+)dxdy 
+\]
+
+
+\[
+=\int\int_{\Omega_1}\left\{\begin{array}{c}
+a\\
+b\\
+c\\
+A\\
+B\\
+C
+\end{array}\right\}(
+a,b,c,A,B,C
+)dxdy 
+\]
+
+\[
+=\int\int_{\Omega_1}\left[\begin{array}{cccccc}
+    a^2&ab&ac&aA&aB&aC\\
+    ba&b^2&bc&bA&bB&bC\\
+    ca&cb&c^2&cA&cB&cC\\
+    Aa&Ab&Ac&A^2&AB&AC\\
+    Ba&Bb&Bc&BA&B^2&BC\\
+    Ca&Cb&Cc&CA&CB&C^2
+\end{array}\right]dxdy
+\]
+
+
+
+\[
+=\left[\begin{array}{cccccc}
+    \int\int_{\Omega_1}a^2dxdy&\int\int_{\Omega_1}abdxdy&\int\int_{\Omega_1}acdxdy&\int\int_{\Omega_1}aAdxdy&\int\int_{\Omega_1}aBdxdy&\int\int_{\Omega_1}aCdxdy\\
+    \int\int_{\Omega_1}baxdy&\int\int_{\Omega_1}b^2xdy&\int\int_{\Omega_1}bcxdy&\int\int_{\Omega_1}bAxdy&\int\int_{\Omega_1}bBxdy&\int\int_{\Omega_1}bCdxdy\\
+    \int\int_{\Omega_1}caxdy&\int\int_{\Omega_1}cbxdy&\int\int_{\Omega_1}c^2xdy&\int\int_{\Omega_1}cAxdy&\int\int_{\Omega_1}cBxdy&\int\int_{\Omega_1}cCdxyd\\
+    \int\int_{\Omega_1}Aaxdy&\int\int_{\Omega_1}Abxdy&\int\int_{\Omega_1}Acxdy&\int\int_{\Omega_1}A^2xdy&\int\int_{\Omega_1}ABxdy&\int\int_{\Omega_1}ACdxdy\\
+    \int\int_{\Omega_1}Baxdy&\int\int_{\Omega_1}Bbxdy&\int\int_{\Omega_1}Bcxdy&\int\int_{\Omega_1}BAxdy&\int\int_{\Omega_1}B^2xdy&\int\int_{\Omega_1}BCdxdy\\
+    \int\int_{\Omega_1}Caxdy&\int\int_{\Omega_1}Cbxdy&\int\int_{\Omega_1}Ccxdy&\int\int_{\Omega_1}CAxdy&\int\int_{\Omega_1}CBxdy&\int\int_{\Omega_1}C^2dxdy
+\end{array}\right]
+\]
+
+
 \end{document}
