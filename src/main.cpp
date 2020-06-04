@@ -41,7 +41,7 @@ int main(int argc, char **argv)
   double Re, dt, res;
 
   initop(argc,argv);
-  
+
   if(initnavi("cavity32.mesh",Re=5000,dt=0.001, u, v)) return 0;
 
   matrix<double> A; vector<double> U, b;
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
     if ( defop("-test") ) {
       if ( T > 5 ) return 0;
       fprintuv(U); plotuv(U);
-    } else if (!(T%100)) fprintuv(U);
+    } else if (!(T%100)){/* plotuv(U); */fprintuv(U);}
   }
   return 0;
 }
